@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>🛣 Trips</h2>
+
+{% if session.role in ['admin', 'manager'] %}
+<a class="btn" href="/add_trip">+ Create Trip</a>
+{% endif %}
+
+<div class="table-container">
+<table>
+
+<tr>
+<th>ID</th>
+<th>Driver</th>
+<th>Truck</th>
+<th>Route</th>
+<th class="text-center">Status</th>
+{% if session.role in ['admin', 'manager'] %}
+<th class="text-center">Action</th>
+{% endif %}
+</tr>
+
+{% for t in trips %}
+
+<tr>
+
+<td>{{ t.id }}</td>
+<td>{{ t.driver }}</td>
+<td>{{ t.truck }}</td>
+<td>{{ t.route }}</td>
+<td class="status {% if t.status == 'pending' %}status-pending{% elif t.status == 'in_progress' %}status-in_progress{% elif t.status == 'completed' %}status-completed{% else %}status-cancelled{% endif %} text-center">{{ t.status|title }}</td>
+
+{% if session.role in ['admin', 'manager'] %}
+<td class="text-center">
+<a class="action-btn edit" href="/edit_trip/{{ t.id }}">Edit</a>
+<a class="action-btn delete" href="/delete_trip/{{ t.id }}" onclick="return confirm('Delete this trip?');">Delete</a>
+</td>
+{% endif %}
+
+</tr>
+
+{% endfor %}
+
+</table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2>Personnel Directory</h2>
+    <div>
+        {% if current_type == 'driver' and session.role in ['admin', 'manager'] %}
+        <a href="/add_driver" class="btn">➕ Add Driver</a>
+        {% elif current_type in ['manager', 'accountant'] and session.role == 'admin' %}
+        <a href="/add_user?role={{ current_type }}" class="btn">➕ Add {{ current_type|title }}</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Tabs for Users -->
+<div style="display: flex; gap: 12px; margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+    <a href="/users?type=driver" class="btn" style="{% if current_type == 'driver' %}box-shadow: 0 4px 10px rgba(107, 142, 35, 0.4); border-color: var(--accent);{% else %}background: var(--bg-card); color: var(--text-main);{% endif %}">
+        🚚 Drivers
+    </a>
+    
+    {% if session.role == 'admin' %}
+    <a href="/users?type=manager" class="btn" style="{% if current_type == 'manager' %}box-shadow: 0 4px 10px rgba(107, 142, 35, 0.4); border-color: var(--accent);{% else %}background: var(--bg-card); color: var(--text-main);{% endif %}">
+        💼 Managers
+    </a>
+    {% endif %}
+
+    <a href="/users?type=accountant" class="btn" style="{% if current_type == 'accountant' %}box-shadow: 0 4px 10px rgba(107, 142, 35, 0.4); border-color: var(--accent);{% else %}background: var(--bg-card); color: var(--text-main);{% endif %}">
+        📊 Accountants
+    </a>
+</div>
+
+<div class="table-container">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            {% if current_type == 'driver' %}
+            <th>License</th>
+            {% else %}
+            <th>Email</th>
+            {% endif %}
+            <th>Phone</th>
+            <th class="text-center">Status</th>
+            {% if current_type == 'driver' and session.role in ['admin', 'manager'] %}
+            <th>Actions</th>
+            {% elif current_type in ['manager', 'accountant'] and session.role == 'admin' %}
+            <th>Actions</th>
+            {% endif %}
+        </tr>
+        
+        {% for u in users_data %}
+        <tr>
+            <td>#{{ u.id }}</td>
+            <td style="font-weight: 500;">{{ u.name }}</td>
+            
+            {% if current_type == 'driver' %}
+            <td>{{ u.license }}</td>
+            <td>{{ u.phone }}</td>
+            <td class="status {% if u.status == 'available' %}status-active{% else %}status-inactive{% endif %} text-center">
+                {{ u.status|title }}
+            </td>
+            <td>
+                <a href="/edit_driver/{{ u.id }}" class="action-btn edit">✏️ Edit</a>
+                <a href="/delete_driver/{{ u.id }}" class="action-btn delete" onclick="return confirm('Delete this driver?');">🗑️ Delete</a>
+            </td>
+            
+            {% else %}
+            <td>{{ u.email }}</td>
+            <td>{{ u.phone if u.phone else 'N/A' }}</td>
+            <td class="status {% if u.status == 'active' %}status-active{% else %}status-inactive{% endif %} text-center">
+                {{ u.status|title }}
+            </td>
+            {% if session.role == 'admin' %}
+            <td>
+                <a href="/edit_user/{{ u.id }}" class="action-btn edit">✏️ Edit</a>
+                <a href="/delete_user/{{ u.id }}" class="action-btn delete" onclick="return confirm('Delete this {{ current_type }}?');">🗑️ Delete</a>
+            </td>
+            {% endif %}
+            {% endif %}
+        </tr>
+        {% endfor %}
+
+    </table>
+
+    {% if not users_data %}
+    <p style="padding: 30px; text-align: center; color: var(--text-muted);">No records found for {{ current_type|title }}s.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

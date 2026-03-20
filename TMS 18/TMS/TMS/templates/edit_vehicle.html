@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container" style="max-width: 500px; margin: 0 auto; background: var(--bg-card); padding: 30px; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--shadow-md);">
+    <h2 style="margin-bottom: 20px;">✏️ Edit Vehicle</h2>
+    <form action="/edit_vehicle/{{ vehicle.Vehicle_id }}" method="POST">
+        <div class="input-group">
+            <label>Truck Number</label>
+            <input type="text" name="truck_no" value="{{ vehicle.Truck_Number }}" readonly style="width:100%; padding:10px; margin-bottom:15px; background: #e0e0e0; border: 1px solid var(--border-color); color: var(--text-muted); border-radius: var(--radius-sm); cursor: not-allowed;">
+            <small style="color: var(--text-muted); display: block; margin-top: -10px; margin-bottom: 15px;">Truck Number cannot be changed</small>
+        </div>
+        <div class="input-group">
+            <label>Registration Number (e.g. MH12AB1234)</label>
+            <input type="text" name="reg_no" value="{{ vehicle.Registration_Number }}" required style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+        </div>
+        <div class="input-group">
+            <label>Capacity (Tons)</label>
+            <input type="number" step="0.1" name="capacity" value="{{ vehicle.Capacity_Tons }}" required style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+        </div>
+        <div class="input-group">
+            <label>Status</label>
+            <select name="status" style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+                <option value="available" {% if vehicle.Status == 'available' %}selected{% endif %}>Available</option>
+                <option value="in_use" {% if vehicle.Status == 'in_use' %}selected{% endif %}>In Use</option>
+                <option value="maintenance" {% if vehicle.Status == 'maintenance' %}selected{% endif %}>Maintenance</option>
+            </select>
+        </div>
+        <button type="submit" class="btn" style="width: 100%;">Update Vehicle</button>
+    </form>
+</div>
+{% endblock %}

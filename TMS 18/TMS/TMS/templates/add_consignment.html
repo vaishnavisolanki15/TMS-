@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container" style="max-width: 500px; margin: 0 auto; background: var(--bg-card); padding: 30px; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--shadow-md);">
+    <h2 style="margin-bottom: 20px;">📦 Add Consignment</h2>
+    <form action="/add_consignment" method="POST">
+        
+        <div class="input-group">
+            <label>Assign to Trip (Optional)</label>
+            <select name="trip_id" style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+                <option value="">-- Unassigned --</option>
+                {% for t in trips %}
+                <option value="{{ t.Trip_id }}">Trip #{{ t.Trip_id }} ({{ t.Route_From }} to {{ t.Route_To }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Sender Name</label>
+            <input type="text" name="sender" required style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+        </div>
+
+        <div class="input-group">
+            <label>Receiver Name</label>
+            <input type="text" name="receiver" required style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+        </div>
+
+        <div class="input-group">
+            <label>Goods Type</label>
+            <input type="text" name="goods_type" required style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+        </div>
+
+        <div class="input-group">
+            <label>Weight (Tons)</label>
+            <input type="number" step="0.1" name="weight" required style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+        </div>
+
+        <div class="input-group">
+            <label>Freight Amount (₹)</label>
+            <input type="number" step="0.01" name="amount" required style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+        </div>
+
+        <button type="submit" class="btn" style="width: 100%;">Create Consignment</button>
+    </form>
+</div>
+{% endblock %}

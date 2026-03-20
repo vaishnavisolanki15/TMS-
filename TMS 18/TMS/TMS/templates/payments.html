@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>💳 Payments</h2>
+
+{% if session.role in ['admin', 'accountant'] %}
+<a class="btn" href="/add_payment">+ Add Payment</a>
+{% endif %}
+
+<div class="table-container">
+<table>
+
+<tr>
+<th>ID</th>
+<th>Trip</th>
+<th>Amount</th>
+<th>Status</th>
+{% if session.role in ['admin', 'accountant'] %}
+<th>Action</th>
+{% endif %}
+</tr>
+
+{% for p in payments %}
+
+<tr>
+
+<td>{{ p.id }}</td>
+<td>{{ p.trip_id }}</td>
+<td>₹ {{ p.amount }}</td>
+<td>{{ p.status }}</td>
+
+{% if session.role in ['admin', 'accountant'] %}
+<td>
+<a class="action-btn edit" href="/edit_payment/{{ p.id }}">Edit</a>
+<a class="action-btn delete" href="/delete_payment/{{ p.id }}">Delete</a>
+</td>
+{% endif %}
+
+</tr>
+
+{% endfor %}
+
+</table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+<div class="sidebar">
+
+<h2>TMS</h2>
+
+<ul>
+
+<li><a href="/dashboard" {% if request.path == '/dashboard' %}class="active"{% endif %}>Dashboard</a></li>
+
+{% if session["role"] in ["admin","manager"] %}
+<li><a href="/vehicles" {% if request.path == '/vehicles' %}class="active"{% endif %}>Vehicles</a></li>
+<li><a href="/users" {% if request.path == '/users' %}class="active"{% endif %}>Users</a></li>
+<li><a href="/trips" {% if request.path == '/trips' %}class="active"{% endif %}>Trips</a></li>
+{% endif %}
+
+{% if session["role"] in ["admin","manager","accountant"] %}
+<li><a href="/consignments" {% if request.path == '/consignments' %}class="active"{% endif %}>Consignments</a></li>
+{% endif %}
+
+{% if session["role"] in ["admin","accountant"] %}
+<li><a href="/payments" {% if request.path == '/payments' %}class="active"{% endif %}>Payments</a></li>
+{% endif %}
+
+<li><a href="/profile" {% if request.path == '/profile' %}class="active"{% endif %}>My Profile</a></li>
+<li><a href="#" onclick="confirmLogout(event)">Logout</a></li>
+
+</ul>
+
+</div>

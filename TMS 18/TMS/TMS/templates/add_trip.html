@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container" style="max-width: 500px; margin: 0 auto; background: var(--bg-card); padding: 30px; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--shadow-md);">
+    <h2 style="margin-bottom: 20px;">🛣 Assign Trip</h2>
+    <form action="/add_trip" method="POST">
+        
+        <div class="input-group">
+            <label>Select Vehicle</label>
+            <select name="vehicle_id" required style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+                {% for v in vehicles %}
+                <option value="{{ v.Vehicle_id }}">{{ v.Registration_Number }} ({{ v.Capacity_Tons }}t)</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Select Driver</label>
+            <select name="driver_id" required style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+                {% for d in drivers %}
+                <option value="{{ d.driver_id }}">{{ d.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Route From</label>
+            <input type="text" name="route_from" required style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+        </div>
+
+        <div class="input-group">
+            <label>Route To</label>
+            <input type="text" name="route_to" required style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+        </div>
+
+        <div class="input-group">
+            <label>Start Date</label>
+            <input type="date" name="start_date" required style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+        </div>
+
+        <div class="input-group">
+            <label>End Date (Optional)</label>
+            <input type="date" name="end_date" style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+        </div>
+
+        <div class="input-group">
+            <label>Status</label>
+            <select name="status" style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+                <option value="pending">Pending</option>
+                <option value="in_progress">In Progress</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn" style="width: 100%;">Create Trip</button>
+    </form>
+</div>
+{% endblock %}

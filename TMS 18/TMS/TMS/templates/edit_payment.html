@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container" style="max-width: 500px; margin: 0 auto; background: var(--bg-card); padding: 30px; border-radius: var(--radius-md); border: 1px solid var(--border-color); box-shadow: var(--shadow-md);">
+    <h2 style="margin-bottom: 20px;">✏️ Edit Payment</h2>
+    <form action="/edit_payment/{{ payment.Payment_id }}" method="POST">
+        
+        <div class="input-group">
+            <label>Consignment ID</label>
+            <input type="text" name="consignment_id" value="{{ payment.Consignment_id }}" readonly style="width:100%; padding:10px; margin-bottom:15px; background: #e0e0e0; border: 1px solid var(--border-color); color: var(--text-muted); border-radius: var(--radius-sm); cursor: not-allowed;">
+        </div>
+
+        <div class="input-group">
+            <label>Amount (₹)</label>
+            <input type="number" step="0.01" name="amount" value="{{ payment.Amount }}" required style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+        </div>
+
+        <div class="input-group">
+            <label>Payment Method</label>
+            <select name="method" style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+                <option value="cash" {% if payment.method == 'cash' %}selected{% endif %}>Cash</option>
+                <option value="upi" {% if payment.method == 'upi' %}selected{% endif %}>UPI</option>
+                <option value="card" {% if payment.method == 'card' %}selected{% endif %}>Card</option>
+                <option value="bank_transfer" {% if payment.method == 'bank_transfer' %}selected{% endif %}>Bank Transfer</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Payment Date</label>
+            <input type="date" name="payment_date" value="{{ payment.Payment_date }}" required style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+        </div>
+
+        <div class="input-group">
+            <label>Reference Number (Optional)</label>
+            <input type="text" name="reference" value="{{ payment.Reference_no if payment.Reference_no else '' }}" style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+        </div>
+
+        <div class="input-group">
+            <label>Status</label>
+            <select name="status" style="width:100%; padding:10px; margin-bottom:15px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm);">
+                <option value="pending" {% if payment.status == 'pending' %}selected{% endif %}>Pending</option>
+                <option value="completed" {% if payment.status == 'completed' %}selected{% endif %}>Completed</option>
+                <option value="failed" {% if payment.status == 'failed' %}selected{% endif %}>Failed</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn" style="width: 100%;">Update Payment</button>
+    </form>
+</div>
+{% endblock %}

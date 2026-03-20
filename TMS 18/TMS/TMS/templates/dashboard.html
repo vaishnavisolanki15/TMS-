@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Dashboard</h2>
+
+{% if session.role in ['admin', 'manager', 'accountant'] %}
+
+<div class="cards">
+
+<div class="card">
+<h3>{{ vehicle_count }}</h3>
+<p>🚚 Total Vehicles</p>
+</div>
+
+<div class="card">
+<h3>{{ trip_count }}</h3>
+<p>🛣 Total Trips</p>
+</div>
+
+<div class="card">
+<h3>{{ consignment_count }}</h3>
+<p>📦 Total Consignments</p>
+</div>
+
+<div class="card">
+<h3>{{ payment_total }}</h3>
+<p>💳 Total Payments</p>
+</div>
+
+</div>
+
+<!-- DASHBOARD REPORTS (CHARTS) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="charts-grid" style="margin-top: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px;">
+    
+    <div class="chart-container" style="background: var(--bg-card); backdrop-filter: blur(12px); padding: 24px; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); border-top: 3px solid var(--primary-lighter);">
+        <h3 style="font-family: 'Chakra Petch', sans-serif; font-size: 14px; color: var(--text-muted); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;">Revenue Timeline (₹)</h3>
+        <canvas id="revenueChart"></canvas>
+    </div>
+
+    <div class="chart-container" style="background: var(--bg-card); backdrop-filter: blur(12px); padding: 24px; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); border-top: 3px solid var(--primary-lighter);">
+        <h3 style="font-family: 'Chakra Petch', sans-serif; font-size: 14px; color: var(--text-muted); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;">Trips Started</h3>
+        <canvas id="tripsChart"></canvas>
+    </div>
+
+    <div class="chart-container" style="background: var(--bg-card); backdrop-filter: blur(12px); padding: 24px; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); border-top: 3px solid var(--primary-lighter);">
+        <h3 style="font-family: 'Chakra Petch', sans-serif; font-size: 14px; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;">Fleet Status</h3>
+        <canvas id="vehiclesChart"></canvas>
+    </div>
+
+    <div class="chart-container" style="background: var(--bg-card); backdrop-filter: blur(12px); padding: 24px; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); border-top: 3px solid var(--primary-lighter);">
+        <h3 style="font-family: 'Chakra Petch', sans-serif; font-size: 14px; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;">Active Consignments</h3>
+        <canvas id="consignmentsChart"></canvas>
+    </div>
+
+</div>
+
+<!-- Safely pass Jinja data to JS to prevent IDE syntax errors -->
+<script id="chart-data" type="application/json">
+{
+    "revenue": {{ revenue_data|tojson }},
+    "trips": {{ trips_data|tojson }},
+    "vehicles": {{ vehicle_data|tojson }},
+    "consignments": {{ consignment_data|tojson }}
+}
+</script>
+
+<script>
+    // Parse the JSON data safely
+    const rawData = document.getElementById('chart-data').textContent;
+    const chartData = JSON.parse(rawData);
+
+    // Global Chart.js Styling matching exactly with our Light Olive CSS
+    Chart.defaults.color = '#6b7280';
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    const gridColor = 'rgba(0, 0, 0, 0.05)';
+
+    // 1. Revenue Chart (Bar)
+    new Chart(document.getElementById('revenueChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Today', 'This Week', 'This Month', 'This Year'],
+            datasets: [{
+                label: 'Revenue',
+                data: chartData.revenue,
+                backgroundColor: 'rgba(107, 142, 35, 0.6)', /* Olive */
+                borderColor: '#6b8e23',
+                borderWidth: 2,
+                borderRadius: 8,
+                hoverBackgroundColor: 'rgba(85, 107, 47, 0.8)' /* Dark Olive */
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true, grid: { color: gridColor }, border: { dash: [4, 4] } },
+                x: { grid: { display: false } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // 2. Trips Chart (Line Area)
+    new Chart(document.getElementById('tripsChart'), {
+        type: 'line',
+        data: {
+            labels: ['Today', 'This Week', 'This Month', 'This Year'],
+            datasets: [{
+                label: 'Trips',
+                data: chartData.trips,
+                borderColor: '#d4af37', /* Muted Gold */
+                backgroundColor: 'rgba(212, 175, 55, 0.15)',
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#d4af37',
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true, grid: { color: gridColor }, ticks: { precision: 0 }, border: { dash: [4, 4] } },
+                x: { grid: { display: false } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // 3. Vehicles Chart (Pie)
+    new Chart(document.getElementById('vehiclesChart'), {
+        type: 'pie',
+        data: {
+            labels: ['Available', 'In Use', 'Maintenance'],
+            datasets: [{
+                data: chartData.vehicles,
+                backgroundColor: ['#6b8e23', '#8fbc8f', '#d4af37'], /* Olive, Sea Green, Mustard */
+                borderWidth: 1,
+                borderColor: '#ffffff',
+                hoverOffset: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { 
+                legend: { position: 'bottom', labels: { color: '#4b5563', padding: 20, font: { family: "'Plus Jakarta Sans', sans-serif" } } }
+            }
+        }
+    });
+
+    // 4. Consignments Chart (Doughnut)
+    new Chart(document.getElementById('consignmentsChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Booked', 'In Transit', 'Delivered'],
+            datasets: [{
+                data: chartData.consignments,
+                backgroundColor: ['#d4af37', '#8fbc8f', '#556b2f'], /* Mustard, Sea Green, Dark Olive */
+                borderWidth: 1,
+                borderColor: '#ffffff',
+                cutout: '75%',
+                hoverOffset: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { 
+                legend: { position: 'bottom', labels: { color: '#4b5563', padding: 20, font: { family: "'Plus Jakarta Sans', sans-serif" } } }
+            }
+        }
+    });
+</script>
+
+{% elif session.role == 'driver' %}
+
+<div class="driver-dashboard" style="margin-top: 30px;">
+    
+    <h3 style="margin-bottom: 20px; color: var(--text-main);">🟢 Current Trips</h3>
+    {% if current_trips %}
+    <div class="table-container" style="margin-bottom: 40px;">
+        <table>
+            <tr>
+                <th>Trip ID</th>
+                <th>Truck</th>
+                <th>Route</th>
+                <th>Start Date</th>
+            </tr>
+            {% for t in current_trips %}
+            <tr>
+                <td>#{{ t.id }}</td>
+                <td>{{ t.truck }}</td>
+                <td>{{ t.route }}</td>
+                <td>{{ t.start }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% else %}
+    <p style="margin-bottom: 40px; color: var(--text-muted);">You have no trips currently in progress.</p>
+    {% endif %}
+
+    <h3 style="margin-bottom: 20px; color: var(--text-main);">⏳ Upcoming Trips</h3>
+    {% if upcoming_trips %}
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>Trip ID</th>
+                <th>Truck</th>
+                <th>Route</th>
+                <th>Scheduled Date</th>
+            </tr>
+            {% for t in upcoming_trips %}
+            <tr>
+                <td>#{{ t.id }}</td>
+                <td>{{ t.truck }}</td>
+                <td>{{ t.route }}</td>
+                <td>{{ t.start }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% else %}
+    <p style="color: var(--text-muted);">No upcoming trips assigned.</p>
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+{% endblock %}
