@@ -53,7 +53,7 @@ def login():
         user = cur.fetchone()
 
         if user:
-            session["user_id"] = user["User_id"]
+            session["user_id"] = user["user_id"]
             session["username"] = user["First_name"] + " " + user["Last_name"]
             session["role"] = user["Role"]
             
