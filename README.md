@@ -59,7 +59,7 @@ Transport-Management-System/
 
 > The exact file structure may be different depending on the final version of the project.
 
-## ⚙️ How to Run the Project
+## How to Run the Project
 
 ### 1. Clone the Repository
 
